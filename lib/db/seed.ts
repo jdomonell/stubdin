@@ -1,38 +1,38 @@
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
+import { users, artists, venues } from './schema';
 import { hashPassword } from '@/lib/auth/session';
 
 async function createStripeProducts() {
   console.log('Creating Stripe products and prices...');
 
-  const baseProduct = await stripe.products.create({
-    name: 'Base',
-    description: 'Base subscription plan',
+  const artistPlusProduct = await stripe.products.create({
+    name: 'Artist Plus',
+    description: 'Enhanced features for artists - advanced analytics, priority support',
   });
 
   await stripe.prices.create({
-    product: baseProduct.id,
-    unit_amount: 800, // $8 in cents
+    product: artistPlusProduct.id,
+    unit_amount: 1500, // $15 in cents
     currency: 'usd',
     recurring: {
       interval: 'month',
-      trial_period_days: 7,
+      trial_period_days: 14,
     },
   });
 
-  const plusProduct = await stripe.products.create({
-    name: 'Plus',
-    description: 'Plus subscription plan',
+  const venuePlusProduct = await stripe.products.create({
+    name: 'Venue Plus',
+    description: 'Enhanced features for venues - advanced booking tools, priority listings',
   });
 
   await stripe.prices.create({
-    product: plusProduct.id,
-    unit_amount: 1200, // $12 in cents
+    product: venuePlusProduct.id,
+    unit_amount: 2500, // $25 in cents
     currency: 'usd',
     recurring: {
       interval: 'month',
-      trial_period_days: 7,
+      trial_period_days: 14,
     },
   });
 
@@ -40,35 +40,89 @@ async function createStripeProducts() {
 }
 
 async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
-  const passwordHash = await hashPassword(password);
-
-  const [user] = await db
+  // Create test fan user
+  const fanPasswordHash = await hashPassword('fan123');
+  const [fanUser] = await db
     .insert(users)
     .values([
       {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
+        name: 'Test Fan',
+        email: 'fan@test.com',
+        passwordHash: fanPasswordHash,
+        role: "fan",
       },
     ])
     .returning();
 
-  console.log('Initial user created.');
+  // Create test artist user
+  const artistPasswordHash = await hashPassword('artist123');
+  const [artistUser] = await db
+    .insert(users)
+    .values([
+      {
+        name: 'Test Artist',
+        email: 'artist@test.com',
+        passwordHash: artistPasswordHash,
+        role: "artist",
+      },
+    ])
+    .returning();
 
-  const [team] = await db
-    .insert(teams)
+  // Create artist profile
+  const [artistProfile] = await db
+    .insert(artists)
     .values({
-      name: 'Test Team',
+      userId: artistUser.id,
+      stageName: 'The Test Band',
+      bio: 'A test band for the platform demo',
+      genres: ['rock', 'indie'],
+      socialLinks: {
+        website: 'https://thetestband.com',
+        spotify: 'https://spotify.com/artist/testband',
+        instagram: '@thetestband'
+      },
+      verified: true
     })
     .returning();
 
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
-  });
+  // Create test venue user
+  const venuePasswordHash = await hashPassword('venue123');
+  const [venueUser] = await db
+    .insert(users)
+    .values([
+      {
+        name: 'Test Venue',
+        email: 'venue@test.com',
+        passwordHash: venuePasswordHash,
+        role: "venue",
+      },
+    ])
+    .returning();
+
+  // Create venue profile
+  const [venueProfile] = await db
+    .insert(venues)
+    .values({
+      userId: venueUser.id,
+      name: 'The Test Venue',
+      description: 'A great venue for live music',
+      address: '123 Music Street',
+      city: 'Music City',
+      state: 'CA',
+      country: 'USA',
+      postalCode: '90210',
+      capacity: 300,
+      amenities: ['sound_system', 'lighting', 'bar'],
+      contactEmail: 'bookings@testvenue.com',
+      contactPhone: '(555) 123-4567',
+      verified: true
+    })
+    .returning();
+
+  console.log('Initial users and profiles created.');
+  console.log(`Fan user: fan@test.com / fan123`);
+  console.log(`Artist user: artist@test.com / artist123`);
+  console.log(`Venue user: venue@test.com / venue123`);
 
   await createStripeProducts();
 }

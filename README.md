@@ -1,119 +1,246 @@
-# Next.js SaaS Starter
+# Stub'din - Artist-First Ticketing & Booking Marketplace
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
+> Fair, transparent ticketing and venue booking for artists, venues, and fans. No hidden fees, no middlemen.
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+## 🎵 Vision
 
-## Features
+Stub'din is transforming the live music industry by giving artists and independent venues full control over ticketing and booking, eliminating hidden fees and middle-men while delivering a fair, transparent fan experience.
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+## 🚀 Core Features
 
-## Tech Stack
+### For Artists
+- **Event Management**: Create, publish, and manage live events
+- **Revenue Control**: Keep more of your ticket sales with transparent ≤7% platform fee
+- **Fan Data Ownership**: Own your fan data for future marketing
+- **Flexible Resale Rules**: Set your own resale policies to protect your community
+- **Venue Discovery**: Connect with venues through the booking marketplace
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+### For Venues
+- **Artist Discovery**: Find and book amazing talent through the marketplace
+- **Automated Operations**: Streamlined booking, settlement, and reporting
+- **Analytics**: Detailed insights into your venue's performance
+- **Revenue Share**: Fair and transparent revenue splits
 
-## Getting Started
+### For Fans
+- **Transparent Pricing**: "What you see is what you pay" - no hidden fees
+- **Anti-Bot Protection**: Fair queueing and verified purchases
+- **Ethical Resale**: Artist-controlled resale policies
+- **Direct Support**: Your money goes directly to artists and venues
 
-```bash
-git clone https://github.com/nextjs/saas-starter
-cd saas-starter
-pnpm install
+## 🛠 Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: JWT-based sessions with bcrypt
+- **Payments**: Stripe integration for ticket sales and payouts
+- **UI**: Tailwind CSS with Radix UI components
+- **Type Safety**: Full TypeScript coverage
+
+## 📦 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd stubdin
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in the required environment variables:
+   ```env
+   # Database
+   DATABASE_URL="postgresql://username:password@localhost:5432/stubdin"
+   
+   # Authentication
+   AUTH_SECRET="your-auth-secret-key"
+   
+   # Stripe
+   STRIPE_SECRET_KEY="sk_test_..."
+   STRIPE_PUBLISHABLE_KEY="pk_test_..."
+   STRIPE_WEBHOOK_SECRET="whsec_..."
+   
+   # App
+   BASE_URL="http://localhost:3000"
+   ```
+
+4. **Set up the database**
+   ```bash
+   # Generate database migrations
+   pnpm db:generate
+   
+   # Run migrations
+   pnpm db:migrate
+   
+   # (Optional) Seed with sample data
+   pnpm db:seed
+   ```
+
+5. **Start the development server**
+   ```bash
+   pnpm dev
+   ```
+
+Visit [http://localhost:3000](http://localhost:3000) to see the application.
+
+## 🏗 Project Structure
+
+```
+stubdin/
+├── app/
+│   ├── (dashboard)/          # Protected dashboard routes
+│   │   └── dashboard/
+│   │       ├── page.tsx      # Fan dashboard
+│   │       ├── artist/       # Artist-specific pages
+│   │       └── venue/        # Venue-specific pages
+│   ├── (login)/             # Authentication pages
+│   ├── api/                 # API routes
+│   │   ├── events/          # Event management
+│   │   ├── artist/          # Artist endpoints
+│   │   ├── venue/           # Venue endpoints
+│   │   └── tickets/         # Ticket operations
+│   └── page.tsx             # Landing page
+├── components/              # Reusable UI components
+├── lib/
+│   ├── db/                  # Database schema and queries
+│   ├── auth/                # Authentication utilities
+│   └── payments/            # Stripe integration
+└── README.md
 ```
 
-## Running Locally
+## 🎭 User Roles & Flows
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+### 1. Music Fans
+- Sign up and discover events
+- Purchase tickets with transparent pricing
+- Manage ticket collection
+- Transfer/resell tickets (when allowed by artist)
 
-```bash
-stripe login
+### 2. Artists
+- Complete profile setup with stage name, bio, and social links
+- Create and manage events
+- Set ticket prices and resale policies
+- View analytics and revenue
+- Receive booking requests from venues
+
+### 3. Venue Owners
+- Set up venue profile with capacity and amenities
+- Browse and book artists
+- Manage event calendar
+- Track revenue and analytics
+
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/auth/signin` - User login
+- `POST /api/auth/signup` - User registration with role selection
+
+### Events
+- `GET /api/events/upcoming` - Public upcoming events
+- `GET /api/artist/events` - Artist's events
+- `POST /api/events` - Create new event
+
+### Artist
+- `GET /api/artist/profile` - Artist profile
+- `GET /api/artist/stats` - Dashboard statistics
+- `GET /api/artist/bookings` - Booking requests
+
+### Tickets
+- `GET /api/tickets/mine` - User's tickets
+- `POST /api/tickets/purchase` - Buy tickets
+
+## 💳 Payment Integration
+
+Stub'din uses Stripe for secure payment processing:
+
+- **Platform Fee**: ≤7% of ticket face value (configurable)
+- **Payouts**: Automated to artist and venue Stripe accounts
+- **Refunds**: Handled through Stripe with artist approval
+- **International**: Multi-currency support planned
+
+## 🚀 Deployment
+
+### Production Setup
+
+1. **Database**: Set up PostgreSQL (recommend Railway, Supabase, or similar)
+2. **Environment**: Configure production environment variables
+3. **Stripe**: Set up live Stripe account with webhooks
+4. **Deploy**: Deploy to Vercel, Railway, or your preferred platform
+
+### Environment Variables for Production
+```env
+DATABASE_URL="postgresql://..."
+AUTH_SECRET="production-secret"
+STRIPE_SECRET_KEY="sk_live_..."
+STRIPE_WEBHOOK_SECRET="whsec_live_..."
+BASE_URL="https://yourdomain.com"
 ```
 
-Use the included setup script to create your `.env` file:
+## 🔧 Development
 
+### Database Commands
 ```bash
-pnpm db:setup
+pnpm db:generate    # Generate migrations from schema changes
+pnpm db:migrate     # Apply migrations to database
+pnpm db:studio      # Open Drizzle Studio for database inspection
+pnpm db:seed        # Seed database with sample data
 ```
 
-Run the database migrations and seed the database with a default user and team:
-
+### Development Commands
 ```bash
-pnpm db:migrate
-pnpm db:seed
+pnpm dev           # Start development server
+pnpm build         # Build for production
+pnpm start         # Start production server
+pnpm lint          # Run linting
 ```
 
-This will create the following user and team:
+## 🎯 Roadmap
 
-- User: `test@test.com`
-- Password: `admin123`
+### MVP (Current)
+- [x] User authentication with role selection
+- [x] Basic artist, venue, and fan dashboards
+- [x] Event creation and management
+- [ ] Ticket purchasing flow
+- [ ] Basic booking marketplace
 
-You can also create new users through the `/sign-up` route.
+### Phase 2
+- [ ] Mobile check-in app with QR scanning
+- [ ] Advanced resale controls
+- [ ] Artist payout automation
+- [ ] Venue calendar integration
 
-Finally, run the Next.js development server:
+### Phase 3
+- [ ] Global expansion (multi-currency, i18n)
+- [ ] White-label self-hosting
+- [ ] Advanced analytics and reporting
+- [ ] Mobile apps (iOS/Android)
 
-```bash
-pnpm dev
-```
+## 🤝 Contributing
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+We welcome contributions! Please see our contributing guidelines for details on how to:
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+- Follow our code style
 
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
+## 📄 License
 
-## Testing Payments
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-To test Stripe payments, use the following test card details:
+## 🎵 The Mission
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+Stub'din exists to create a fairer, more transparent live music ecosystem where:
+- Artists keep more of their revenue
+- Fans pay honest prices
+- Venues discover amazing talent
+- The community thrives together
 
-## Going to Production
-
-When you're ready to deploy your SaaS application to production, follow these steps:
-
-### Set up a production Stripe webhook
-
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
-
-### Deploy to Vercel
-
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
-
-### Add environment variables
-
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
-
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
-
-## Other Templates
-
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
-
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
-- https://zerotoshipped.com
-- https://turbostarter.dev
+Join us in transforming live music! 🎤✨

@@ -9,22 +9,56 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
+  Music,
+  MapPin,
+  Calendar,
+  Edit,
+  Play,
+  X,
+  CreditCard,
+  RefreshCw,
+  CheckSquare,
+  Star,
   type LucideIcon,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
 import { getActivityLogs } from '@/lib/db/queries';
 
 const iconMap: Record<ActivityType, LucideIcon> = {
+  // Auth activities
   [ActivityType.SIGN_UP]: UserPlus,
   [ActivityType.SIGN_IN]: UserCog,
   [ActivityType.SIGN_OUT]: LogOut,
   [ActivityType.UPDATE_PASSWORD]: Lock,
   [ActivityType.DELETE_ACCOUNT]: UserMinus,
   [ActivityType.UPDATE_ACCOUNT]: Settings,
-  [ActivityType.CREATE_TEAM]: UserPlus,
-  [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
-  [ActivityType.INVITE_TEAM_MEMBER]: Mail,
-  [ActivityType.ACCEPT_INVITATION]: CheckCircle,
+  
+  // Artist activities
+  [ActivityType.CREATE_ARTIST_PROFILE]: Music,
+  [ActivityType.UPDATE_ARTIST_PROFILE]: Edit,
+  [ActivityType.CREATE_EVENT]: Calendar,
+  [ActivityType.UPDATE_EVENT]: Edit,
+  [ActivityType.PUBLISH_EVENT]: Play,
+  [ActivityType.CANCEL_EVENT]: X,
+  
+  // Venue activities
+  [ActivityType.CREATE_VENUE_PROFILE]: MapPin,
+  [ActivityType.UPDATE_VENUE_PROFILE]: Edit,
+  
+  // Booking activities
+  [ActivityType.CREATE_BOOKING_REQUEST]: Mail,
+  [ActivityType.ACCEPT_BOOKING_REQUEST]: CheckCircle,
+  [ActivityType.REJECT_BOOKING_REQUEST]: X,
+  [ActivityType.COUNTER_OFFER_BOOKING]: RefreshCw,
+  
+  // Ticket activities
+  [ActivityType.PURCHASE_TICKET]: CreditCard,
+  [ActivityType.TRANSFER_TICKET]: RefreshCw,
+  [ActivityType.USE_TICKET]: CheckSquare,
+  [ActivityType.REFUND_TICKET]: RefreshCw,
+  
+  // Review activities
+  [ActivityType.CREATE_REVIEW]: Star,
 };
 
 function getRelativeTime(date: Date) {
@@ -43,6 +77,7 @@ function getRelativeTime(date: Date) {
 
 function formatAction(action: ActivityType): string {
   switch (action) {
+    // Auth activities
     case ActivityType.SIGN_UP:
       return 'You signed up';
     case ActivityType.SIGN_IN:
@@ -55,14 +90,51 @@ function formatAction(action: ActivityType): string {
       return 'You deleted your account';
     case ActivityType.UPDATE_ACCOUNT:
       return 'You updated your account';
-    case ActivityType.CREATE_TEAM:
-      return 'You created a new team';
-    case ActivityType.REMOVE_TEAM_MEMBER:
-      return 'You removed a team member';
-    case ActivityType.INVITE_TEAM_MEMBER:
-      return 'You invited a team member';
-    case ActivityType.ACCEPT_INVITATION:
-      return 'You accepted an invitation';
+    
+    // Artist activities
+    case ActivityType.CREATE_ARTIST_PROFILE:
+      return 'You created your artist profile';
+    case ActivityType.UPDATE_ARTIST_PROFILE:
+      return 'You updated your artist profile';
+    case ActivityType.CREATE_EVENT:
+      return 'You created a new event';
+    case ActivityType.UPDATE_EVENT:
+      return 'You updated an event';
+    case ActivityType.PUBLISH_EVENT:
+      return 'You published an event';
+    case ActivityType.CANCEL_EVENT:
+      return 'You cancelled an event';
+    
+    // Venue activities
+    case ActivityType.CREATE_VENUE_PROFILE:
+      return 'You created your venue profile';
+    case ActivityType.UPDATE_VENUE_PROFILE:
+      return 'You updated your venue profile';
+    
+    // Booking activities
+    case ActivityType.CREATE_BOOKING_REQUEST:
+      return 'You sent a booking request';
+    case ActivityType.ACCEPT_BOOKING_REQUEST:
+      return 'You accepted a booking request';
+    case ActivityType.REJECT_BOOKING_REQUEST:
+      return 'You rejected a booking request';
+    case ActivityType.COUNTER_OFFER_BOOKING:
+      return 'You made a counter offer';
+    
+    // Ticket activities
+    case ActivityType.PURCHASE_TICKET:
+      return 'You purchased a ticket';
+    case ActivityType.TRANSFER_TICKET:
+      return 'You transferred a ticket';
+    case ActivityType.USE_TICKET:
+      return 'You used a ticket';
+    case ActivityType.REFUND_TICKET:
+      return 'You refunded a ticket';
+    
+    // Review activities
+    case ActivityType.CREATE_REVIEW:
+      return 'You left a review';
+    
     default:
       return 'Unknown action occurred';
   }

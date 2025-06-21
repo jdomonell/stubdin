@@ -1,12 +1,12 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
-import { getUser, getTeamForUser } from '@/lib/db/queries';
+import { getUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: "Stub'din - Artist-First Ticketing & Booking",
+  description: 'Fair, transparent ticketing and venue booking for artists, venues, and fans. No hidden fees, no middlemen.'
 };
 
 export const viewport: Viewport = {
@@ -31,8 +31,7 @@ export default function RootLayout({
             fallback: {
               // We do NOT await here
               // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/team': getTeamForUser()
+              '/api/user': getUser()
             }
           }}
         >
